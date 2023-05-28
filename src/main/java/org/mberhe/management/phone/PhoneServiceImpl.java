@@ -167,7 +167,7 @@ public class PhoneServiceImpl implements PhoneService {
   }
 
   @Override
-  public Mono<Void> returnPhone(final Integer phoneId) {
+  public Mono<String> returnPhone(final Integer phoneId) {
     return this.phoneBorrowingRepository.findByPhoneIdAndReturnedDateIsNull(phoneId)
       .switchIfEmpty(
         Mono.error(new PhoneBorrowingException("Phone return status already updated"))
@@ -177,6 +177,6 @@ public class PhoneServiceImpl implements PhoneService {
         return this.phoneBorrowingRepository.save(phoneBorrowing);
       }).switchIfEmpty(
         Mono.error(new PhoneBorrowingException(UPDATING_RETURNING_STATUS_ERROR_MSG))
-      ).then();
+      ).map(phoneBorrowing -> REQUEST_PROCESSING_SUCCESS_MSG);
   }
 }

@@ -64,14 +64,14 @@ public class PhoneRestController {
   }
 
   @PostMapping("/borrow")
-  @ResponseStatus(HttpStatus.CREATED)
+  @ResponseStatus(HttpStatus.ACCEPTED)
   public Mono<String> borrowPhone(@Valid @RequestBody final PhoneBorrowingDTO phoneBorrowingDTO) {
     return this.phoneService.borrowPhone(phoneBorrowingDTO);
   }
 
   @PutMapping("/return/{phoneId}")
-  @ResponseStatus(HttpStatus.CREATED)
-  public Mono<Void> returnPhone(@PathVariable("phoneId") final Integer phoneId) {
+  @ResponseStatus(HttpStatus.ACCEPTED)
+  public Mono<String> returnPhone(@PathVariable("phoneId") final Integer phoneId) {
     return this.phoneService.returnPhone(phoneId);
   }
 }

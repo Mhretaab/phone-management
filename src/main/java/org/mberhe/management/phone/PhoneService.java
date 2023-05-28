@@ -24,5 +24,5 @@ public interface PhoneService extends Service {
 
   Mono<String> borrowPhone(PhoneBorrowingDTO phoneBorrowingDTO);
 
-  Mono<Void> returnPhone(Integer phoneId);
+  Mono<String>returnPhone(Integer phoneId);
 }
