@@ -1,6 +1,6 @@
 # Phone Management
 
-This project is a Java application built using the following technology stack: Java 17, Spring Boot 3, Spring Data R2DBC, Flyway DB Migration, Spring WebFlux, JUnit 5, Mockito, MockWebServer, MySQL, and H2 in-memory DB for tests. It provides several features and integrations, as outlined below.
+This project is a Java application built using the following technology stack: Java 17, Spring Boot 3, Spring Data R2DBC, Flyway DB Migration, Spring WebFlux, JUnit 5, Mockito, MockWebServer, MySQL, and MySQL TestContainer for tests. It provides several features and integrations, as outlined below.
 
 ## Features Implemented
 
