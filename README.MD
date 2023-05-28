@@ -53,12 +53,12 @@ Follow the steps below to set up and run the project:
 
 1. Clone the repository:
    ```shell
-   git clone <https://github.com/Mhretaab/phone-management.git>
+   git clone https://github.com/Mhretaab/phone-management.git
    ```
 
 2. Navigate to the project directory:
    ```shell
-   cd <phone-management>
+   cd phone-management
    ```
 
 3. Update the database configuration:
