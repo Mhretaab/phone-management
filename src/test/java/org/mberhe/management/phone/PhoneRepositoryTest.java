@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.mberhe.management.common.AbstractTestContainer;
 import org.mberhe.management.phone.borrowing.PhoneBorrowing;
 import org.mberhe.management.phone.borrowing.PhoneBorrowingRepository;
-import org.mberhe.management.phone.dto.PhoneBorrowingProjection;
+import org.mberhe.management.phone.dto.PhoneAvailability;
 import org.mberhe.management.user.Role;
 import org.mberhe.management.user.User;
 import org.mberhe.management.user.UserRepository;
@@ -62,11 +62,11 @@ class PhoneRepositoryTest extends AbstractTestContainer {
 
   @Test
   void givenId_whenGetPhoneBorrowingProjection_shouldReturnObject() {
-    Mono<PhoneBorrowingProjection> projectionMono = phoneRepository.getPhoneBorrowingProjection(newPhone.getId());
+    Mono<PhoneAvailability> projectionMono = phoneRepository.getPhoneAvailability(newPhone.getId());
 
     StepVerifier.create(projectionMono)
       .expectNext(
-        PhoneBorrowingProjection.builder()
+        PhoneAvailability.builder()
           .available(false)
           .phoneId(newPhone.getId())
           .tester(newUser.getFirstName() + ' ' + newUser.getLastName())
