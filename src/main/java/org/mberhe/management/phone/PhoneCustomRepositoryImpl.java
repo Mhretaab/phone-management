@@ -1,7 +1,7 @@
 package org.mberhe.management.phone;
 
 import lombok.RequiredArgsConstructor;
-import org.mberhe.management.phone.dto.PhoneBorrowingProjection;
+import org.mberhe.management.phone.dto.PhoneAvailability;
 import org.springframework.r2dbc.core.DatabaseClient;
 import reactor.core.publisher.Mono;
 
@@ -10,11 +10,19 @@ public class PhoneCustomRepositoryImpl implements PhoneCustomRepository {
   private final DatabaseClient databaseClient;
 
   @Override
-  public Mono<PhoneBorrowingProjection> getPhoneBorrowingProjection(Integer phoneId) {
+  public Mono<PhoneAvailability> getPhoneAvailability(Integer phoneId) {
     String sql = """
       SELECT
       	p.id AS phoneId,
-      	CONCAT(u.first_name , ' ', u.last_name) AS tester,
+      	IF(
+      	(
+      	CASE
+      	    WHEN u.id IS NULL AND pb.returned_date IS NULL THEN TRUE
+      	    WHEN u.id  IS NOT NULL AND pb.returned_date IS NOT NULL THEN TRUE
+      	    ELSE FALSE
+      	 END
+      	 ) = FALSE, CONCAT(u.first_name , ' ', u.last_name), NULL
+      	) AS tester,
       	CASE
       	    WHEN u.id IS NULL AND pb.returned_date IS NULL THEN TRUE
       	    WHEN u.id  IS NOT NULL AND pb.returned_date IS NOT NULL THEN TRUE
@@ -27,15 +35,23 @@ public class PhoneCustomRepositoryImpl implements PhoneCustomRepository {
       ORDER BY pb.borrowed_date DESC
       LIMIT 1;
       """;
-    return getPhoneBorrowingProjection(sql, "phoneId", phoneId);
+    return getPhoneAvailability(sql, "phoneId", phoneId);
   }
 
   @Override
-  public Mono<PhoneBorrowingProjection> getPhoneBorrowingProjection(String phoneAssignedId) {
+  public Mono<PhoneAvailability> getPhoneAvailability(String phoneAssignedId) {
     String sql = """
       SELECT
       	p.id AS phoneId,
-      	CONCAT(u.first_name , ' ', u.last_name) AS tester,
+      	IF(
+      	(
+      	CASE
+      	    WHEN u.id IS NULL AND pb.returned_date IS NULL THEN TRUE
+      	    WHEN u.id  IS NOT NULL AND pb.returned_date IS NOT NULL THEN TRUE
+      	    ELSE FALSE
+      	 END
+      	 ) = FALSE, CONCAT(u.first_name , ' ', u.last_name), NULL
+      	) AS tester,
       	CASE
       	    WHEN u.id IS NULL AND pb.returned_date IS NULL THEN TRUE
       	    WHEN u.id  IS NOT NULL AND pb.returned_date IS NOT NULL THEN TRUE
@@ -49,15 +65,15 @@ public class PhoneCustomRepositoryImpl implements PhoneCustomRepository {
       LIMIT 1;
       """;
 
-    return getPhoneBorrowingProjection(sql, "phoneAssignedId", phoneAssignedId);
+    return getPhoneAvailability(sql, "phoneAssignedId", phoneAssignedId);
   }
 
-  public Mono<PhoneBorrowingProjection> getPhoneBorrowingProjection(String sql, String bindName, Object bindValue) {
+  public Mono<PhoneAvailability> getPhoneAvailability(String sql, String bindName, Object bindValue) {
     return databaseClient
       .sql(sql)
       .bind(bindName, bindValue)
       .map((row, rowMetadata) ->
-        PhoneBorrowingProjection.builder()
+        PhoneAvailability.builder()
           .phoneId(row.get("phoneId", Integer.class))
           .tester(row.get("tester", String.class))
           .available(row.get("available", Integer.class) == 0 ? false : true)

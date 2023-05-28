@@ -8,7 +8,7 @@ import org.mberhe.management.common.exceptions.EntityNotFoundException;
 import org.mberhe.management.common.exceptions.handler.ErrorAttributesKey;
 import org.mberhe.management.common.exceptions.handler.GlobalErrorAttributes;
 import org.mberhe.management.phone.dto.DeviceDetail;
-import org.mberhe.management.phone.dto.PhoneAvailability;
+import org.mberhe.management.phone.dto.AvailabilityStatus;
 import org.mberhe.management.phone.dto.PhoneDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
@@ -259,7 +259,7 @@ class PhoneRestControllerTest {
       "NewBrand",
       "NewModel",
       "LRdYFycYmp",
-      PhoneAvailability.YES,
+      AvailabilityStatus.YES,
       "",
       "GSM / HSPA / LTE",
       "GSM 850 / 900 / 1800 / 1900 - SIM 1 & SIM 2 (dual-SIM model only)",
@@ -295,7 +295,7 @@ class PhoneRestControllerTest {
       "NewBrand",
       "NewModel",
       phoneDTO.assignedId(),
-      PhoneAvailability.YES,
+      AvailabilityStatus.YES,
       "",
       "GSM / HSPA / LTE",
       "GSM 850 / 900 / 1800 / 1900 - SIM 1 & SIM 2 (dual-SIM model only)",

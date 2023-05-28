@@ -12,7 +12,7 @@ import org.mberhe.management.phone.borrowing.PhoneBorrowing;
 import org.mberhe.management.phone.borrowing.PhoneBorrowingDTO;
 import org.mberhe.management.phone.borrowing.PhoneBorrowingRepository;
 import org.mberhe.management.phone.dto.DeviceDetail;
-import org.mberhe.management.phone.dto.PhoneAvailability;
+import org.mberhe.management.phone.dto.AvailabilityStatus;
 import org.mberhe.management.phone.dto.PhoneDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -83,7 +83,7 @@ public class PhoneServiceImpl implements PhoneService {
         .map(fonoDeviceDescription -> getDeviceDetail(phone, fonoDeviceDescription))
         .switchIfEmpty(Mono.just(getDeviceDetail(phone, null)))
       ).flatMap(deviceDetail ->
-        this.phoneRepository.getPhoneBorrowingProjection(id)
+        this.phoneRepository.getPhoneAvailability(id)
           .map(phoneBorrowingProjection -> DeviceDetail.from(deviceDetail, phoneBorrowingProjection.getAvailable(),
             phoneBorrowingProjection.getTester()))
           .defaultIfEmpty(deviceDetail)
@@ -97,7 +97,7 @@ public class PhoneServiceImpl implements PhoneService {
         .map(fonoDeviceDescription -> getDeviceDetail(phone, fonoDeviceDescription))
         .switchIfEmpty(Mono.just(getDeviceDetail(phone, null)))
       ).flatMap(deviceDetail ->
-        this.phoneRepository.getPhoneBorrowingProjection(assignedId)
+        this.phoneRepository.getPhoneAvailability(assignedId)
           .map(phoneBorrowingProjection -> DeviceDetail.from(deviceDetail, phoneBorrowingProjection.getAvailable(),
             phoneBorrowingProjection.getTester()))
           .defaultIfEmpty(deviceDetail)
@@ -118,7 +118,7 @@ public class PhoneServiceImpl implements PhoneService {
       phone.getBrand(),
       phone.getModel(),
       phone.getAssignedId(),
-      PhoneAvailability.YES,
+      AvailabilityStatus.YES,
       "",
       fonoDeviceDescription == null ? null : fonoDeviceDescription.technology(),
       fonoDeviceDescription == null ? null : fonoDeviceDescription.twoGBands(),
