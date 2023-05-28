@@ -20,7 +20,7 @@ public class PhoneCustomRepositoryImpl implements PhoneCustomRepository {
       	    WHEN u.id  IS NOT NULL AND pb.returned_date IS NOT NULL THEN TRUE
       	    ELSE FALSE
       	 END AS available
-      FROM phone_db.phones AS p
+      FROM phones AS p
       LEFT JOIN phone_borrowings AS pb ON pb.phone_id = p.id
       LEFT JOIN users AS u ON u.id = pb.tester_id
       WHERE p.id = :phoneId
@@ -41,7 +41,7 @@ public class PhoneCustomRepositoryImpl implements PhoneCustomRepository {
       	    WHEN u.id  IS NOT NULL AND pb.returned_date IS NOT NULL THEN TRUE
       	    ELSE FALSE
       	 END AS available
-      FROM phone_db.phones AS p
+      FROM phones AS p
       LEFT JOIN phone_borrowings AS pb ON pb.phone_id = p.id
       LEFT JOIN users AS u ON u.id = pb.tester_id
       WHERE p.assigned_id = :phoneAssignedId
