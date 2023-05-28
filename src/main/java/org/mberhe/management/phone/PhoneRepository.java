@@ -8,7 +8,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
-public interface PhoneRepository extends ReactiveCrudRepository<Phone, Integer>, ReactiveSortingRepository<Phone, Integer> {
+public interface PhoneRepository
+  extends ReactiveCrudRepository<Phone, Integer>, ReactiveSortingRepository<Phone, Integer>, PhoneCustomRepository {
   Flux<Phone> findAllBy(Pageable pageable);
 
   Mono<Phone> findByAssignedId(String assignedId);

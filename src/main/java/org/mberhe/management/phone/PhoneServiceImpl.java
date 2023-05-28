@@ -8,6 +8,9 @@ import org.mberhe.management.common.exceptions.EntityAlreadyExistsException;
 import org.mberhe.management.common.exceptions.EntityNotFoundException;
 import org.mberhe.management.integration.FonoApiClient;
 import org.mberhe.management.integration.FonoDeviceDescription;
+import org.mberhe.management.phone.borrowing.PhoneBorrowing;
+import org.mberhe.management.phone.borrowing.PhoneBorrowingDTO;
+import org.mberhe.management.phone.borrowing.PhoneBorrowingRepository;
 import org.mberhe.management.phone.dto.DeviceDetail;
 import org.mberhe.management.phone.dto.PhoneAvailability;
 import org.mberhe.management.phone.dto.PhoneDTO;
@@ -17,6 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 import static org.mberhe.management.common.util.ErrorMessages.PHONE_ALREADY_EXISTS_ERROR_MSG;
@@ -27,9 +31,12 @@ import static org.mberhe.management.common.util.ErrorMessages.buildErrorMessage;
 @RequiredArgsConstructor
 public class PhoneServiceImpl implements PhoneService {
   public static final String REQUEST_PROCESSING_ERROR_MSG = "Request processing failed";
-  public static final String REQUEST_NO_PHONE_AVAILABLE_MSG = "Request processing failed. All the requested phone type already issued";
+  public static final String REQUEST_NO_PHONE_AVAILABLE_MSG = "Request processing failed. The requested phone already issued";
   public static final String REQUEST_PROCESSING_SUCCESS_MSG = "Request successfully processed";
+  public static final String UPDATING_RETURNING_STATUS_ERROR_MSG = "Error occurred while updating returning status";
   private final PhoneRepository phoneRepository;
+
+  private final PhoneBorrowingRepository phoneBorrowingRepository;
   private final FonoApiClient fonoApiClient;
 
   @Override
@@ -75,6 +82,11 @@ public class PhoneServiceImpl implements PhoneService {
       .flatMap(phone -> this.fonoApiClient.getDeviceDescription(constructQueryParam(phone))
         .map(fonoDeviceDescription -> getDeviceDetail(phone, fonoDeviceDescription))
         .switchIfEmpty(Mono.just(getDeviceDetail(phone, null)))
+      ).flatMap(deviceDetail ->
+        this.phoneRepository.getPhoneBorrowingProjection(id)
+          .map(phoneBorrowingProjection -> DeviceDetail.from(deviceDetail, phoneBorrowingProjection.getAvailable(),
+            phoneBorrowingProjection.getTester()))
+          .defaultIfEmpty(deviceDetail)
       );
   }
 
@@ -84,6 +96,11 @@ public class PhoneServiceImpl implements PhoneService {
       .flatMap(phone -> this.fonoApiClient.getDeviceDescription(constructQueryParam(phone))
         .map(fonoDeviceDescription -> getDeviceDetail(phone, fonoDeviceDescription))
         .switchIfEmpty(Mono.just(getDeviceDetail(phone, null)))
+      ).flatMap(deviceDetail ->
+        this.phoneRepository.getPhoneBorrowingProjection(assignedId)
+          .map(phoneBorrowingProjection -> DeviceDetail.from(deviceDetail, phoneBorrowingProjection.getAvailable(),
+            phoneBorrowingProjection.getTester()))
+          .defaultIfEmpty(deviceDetail)
       );
   }
 
@@ -126,36 +143,40 @@ public class PhoneServiceImpl implements PhoneService {
     return this.phoneRepository.deleteById(id);
   }
 
-//  @Override
-//  public Mono<String> borrowPhone(final PhoneBorrowingDTO phoneBorrowingDTO) {
-//
-//    final Mono<Integer> unBorrowedPhonesMono =
-//      this.phoneBorrowingRepository.getTotalUnreturnedByPhoneId(phoneBorrowingDTO.phoneId())
-//        .defaultIfEmpty(0)
-//        .zipWith(
-//          this.phoneRepository.findTotalById(phoneBorrowingDTO.phoneId())
-//            .defaultIfEmpty(0),
-//          (totalBorrowed, total) -> total - totalBorrowed
-//        );
-//
-//    return unBorrowedPhonesMono
-//      .filter(unBorrowedPhones -> unBorrowedPhones >= phoneBorrowingDTO.totalRequested())
-//      .switchIfEmpty(Mono.error(new PhoneBorrowingException(REQUEST_NO_PHONE_AVAILABLE_MSG)))
-//      .flatMap(unBorrowedPhones ->
-//        this.phoneBorrowingRepository.save(
-//            PhoneTransaction.builder()
-//              .phoneId(phoneBorrowingDTO.phoneId())
-//              .testerId(phoneBorrowingDTO.borrowerId())
-//              .totalBorrowed(phoneBorrowingDTO.totalRequested())
-//              .issuerId(phoneBorrowingDTO.issuerId())
-//              .issueDate(phoneBorrowingDTO.issueDate())
-//              .expectedReturnDate(phoneBorrowingDTO.expectedReturnDate())
-//              .build()
-//          ).switchIfEmpty(
-//            Mono.error(new PhoneBorrowingException(REQUEST_PROCESSING_ERROR_MSG))
-//          )
-//          .map(phoneTransaction -> REQUEST_PROCESSING_SUCCESS_MSG
-//          )
-//      );
-//  }
+  @Override
+  public Mono<String> borrowPhone(final PhoneBorrowingDTO phoneBorrowingDTO) {
+
+    return this.phoneBorrowingRepository.existsByPhoneIdAndReturnedDateIsNull(phoneBorrowingDTO.phoneId())
+      .flatMap(exists -> {
+        if (exists) {
+          return Mono.error(new PhoneBorrowingException(REQUEST_NO_PHONE_AVAILABLE_MSG));
+        } else {
+          return phoneBorrowingRepository.save(
+            PhoneBorrowing.builder()
+              .phoneId(phoneBorrowingDTO.phoneId())
+              .testerId(phoneBorrowingDTO.testerId())
+              .borrowedDate(LocalDate.now())
+              .build()
+          );
+        }
+      })
+      .switchIfEmpty(
+        Mono.error(new PhoneBorrowingException(REQUEST_PROCESSING_ERROR_MSG))
+      )
+      .map(phoneBorrowing -> REQUEST_PROCESSING_SUCCESS_MSG);
+  }
+
+  @Override
+  public Mono<Void> returnPhone(final Integer phoneId) {
+    return this.phoneBorrowingRepository.findByPhoneIdAndReturnedDateIsNull(phoneId)
+      .switchIfEmpty(
+        Mono.error(new PhoneBorrowingException("Phone return status already updated"))
+      )
+      .flatMap(phoneBorrowing -> {
+        phoneBorrowing.setReturnedDate(LocalDate.now());
+        return this.phoneBorrowingRepository.save(phoneBorrowing);
+      }).switchIfEmpty(
+        Mono.error(new PhoneBorrowingException(UPDATING_RETURNING_STATUS_ERROR_MSG))
+      ).then();
+  }
 }

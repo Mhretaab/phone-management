@@ -1,0 +1,562 @@
+{
+	"info": {
+		"_postman_id": "24a7d5e5-698c-4da1-bc20-8d4ae1f6d894",
+		"name": "phone-management",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "phones",
+			"item": [
+				{
+					"name": "GET ALL PHONES",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/phones/all?page=0&size=10&sortBy=brand&sortOrder=ASC",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"phones",
+								"all"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								},
+								{
+									"key": "sortBy",
+									"value": "brand"
+								},
+								{
+									"key": "sortOrder",
+									"value": "ASC"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET PHONE BY ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/phones/by-id/2",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"phones",
+								"by-id",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET PHONE BY ASSIGNED ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/phones/by-assigned-id/vDQM8xkpilWwwromnRAb",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"phones",
+								"by-assigned-id",
+								"vDQM8xkpilWwwromnRAb"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ADD PHONE",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"brand\": \"Apple\",\n    \"model\": \"iPhone 13\",\n    \"assignedId\": \"qzu90C1Jv1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/phones",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"phones"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ADD PHONE WITH NO BRAND",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"model\": \"iPhone 14\",\n    \"assignedId\": \"qzu90C1Jv1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/phones",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"phones"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ADD PHONE WITH NO MODEL",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"brand\": \"Apple\",\n    \"assignedId\": \"qzu90C1Jv1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/phones",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"phones"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE PHONE",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 2,\n    \"brand\": \"Samsung\",\n    \"model\": \"Galaxy S40\",\n    \"assignedId\": \"H2kI3inhv1XxbcJkFhWL\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/phones/2",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"phones",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE PHONE BY ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/phones/7",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"phones",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RETURN PHONE",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/phones/return/2",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"phones",
+								"return",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "BORROW PHONE",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"phoneId\": 3,\n    \"testerId\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/phones/borrow",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"phones",
+								"borrow"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "FONO CLIENT (back4app)",
+			"item": [
+				{
+					"name": "Get Device",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Parse-Application-Id",
+								"value": "hVSh6c7RgE1I9Twe9juBNcMX5DLYACN7tnxookcL",
+								"type": "default"
+							},
+							{
+								"key": "X-Parse-Rest-Api-Key",
+								"value": "qnjvpEypTebuyKhOSNMXsWnLbXLXUga5CU7XYdI3",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://parseapi.back4app.com/classes/MobileDevice?where={\"model\": \"Galaxy S9\"}",
+							"protocol": "https",
+							"host": [
+								"parseapi",
+								"back4app",
+								"com"
+							],
+							"path": [
+								"classes",
+								"MobileDevice"
+							],
+							"query": [
+								{
+									"key": "where",
+									"value": "{\"model\": \"Galaxy S9\"}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "GET ALL USERS",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/users/all?page=0&size=10&sortBy=firstName&sortOrder=ASC",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"all"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								},
+								{
+									"key": "sortBy",
+									"value": "firstName"
+								},
+								{
+									"key": "sortOrder",
+									"value": "ASC"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET USER BY ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/users/by-id/2",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"by-id",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET USER BY EMAIL",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/users/by-email/nhussien@email.com",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"by-email",
+								"nhussien@email.com"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET USER BY PHONE",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/users/by-phone/+971669123458",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"by-phone",
+								"+971669123458"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET USER BY EMAIL OR PHONE",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/users/by-email-or-phone/nhussien@email.com/+971669123458",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"by-email-or-phone",
+								"nhussien@email.com",
+								"+971669123458"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET USE BY FIRST NAME OR LAST NAME",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/users/by-name/nasir?page=0&size=10&sortBy=firstName&sortOrder=ASC",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"by-name",
+								"nasir"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								},
+								{
+									"key": "sortBy",
+									"value": "firstName"
+								},
+								{
+									"key": "sortOrder",
+									"value": "ASC"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CREATE USER",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"Ali\",\n    \"lastName\": \"Abdu\",\n    \"email\": \"aliabdu@email.com\",\n    \"phoneNumber\": \"+34669123458\",\n    \"role\": \"TESTER\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE USER",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \n    \"firstName\": \"Ali\",\n    \"lastName\": \"Abdu\",\n    \"email\": \"new_ali_email@email.com\",\n    \"phoneNumber\": \"+34669123458\",\n    \"role\": \"TESTER\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/3",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE USER BY ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/users/3",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "http://localhost:8080/api",
+			"type": "default"
+		}
+	]
+}

@@ -3,6 +3,7 @@ package org.mberhe.management.phone;
 
 import org.mberhe.management.common.config.web.CustomPagination;
 import org.mberhe.management.common.service.Service;
+import org.mberhe.management.phone.borrowing.PhoneBorrowingDTO;
 import org.mberhe.management.phone.dto.DeviceDetail;
 import org.mberhe.management.phone.dto.PhoneDTO;
 import org.springframework.data.domain.Page;
@@ -21,5 +22,7 @@ public interface PhoneService extends Service {
 
   Mono<Void> deleteById(Integer id);
 
-  //Mono<String> borrowPhone(PhoneBorrowingDTO phoneBorrowingDTO);
+  Mono<String> borrowPhone(PhoneBorrowingDTO phoneBorrowingDTO);
+
+  Mono<Void> returnPhone(Integer phoneId);
 }
