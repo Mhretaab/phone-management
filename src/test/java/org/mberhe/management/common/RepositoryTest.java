@@ -15,8 +15,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
+@Import(TestDatabaseConfiguration.class)
 @DataR2dbcTest
 @ActiveProfiles("test")
-@Import(TestConfig.class)
 public @interface RepositoryTest {
 }
