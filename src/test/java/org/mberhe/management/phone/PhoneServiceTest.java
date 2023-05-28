@@ -10,6 +10,7 @@ import org.mberhe.management.integration.FonoApiClient;
 import org.mberhe.management.integration.FonoDeviceDescription;
 import org.mberhe.management.phone.dto.DeviceDetail;
 import org.mberhe.management.phone.dto.PhoneAvailability;
+import org.mberhe.management.phone.dto.PhoneBorrowingProjection;
 import org.mberhe.management.phone.dto.PhoneDTO;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -145,6 +146,13 @@ class PhoneServiceTest {
     given(phoneRepository.findById(1)).willReturn(Mono.just(newPhone));
     given(fonoApiClient.getDeviceDescription(PhoneServiceImpl.constructQueryParam(newPhone))).willReturn(
       Mono.just(fonoDeviceDescription));
+    given(phoneRepository.getPhoneBorrowingProjection(1)).willReturn(
+      Mono.just(PhoneBorrowingProjection.builder()
+        .available(true)
+        .phoneId(1)
+        .tester("John Max")
+        .build())
+    );
 
     // When
     Mono<DeviceDetail> deviceDetailMono = phoneService.getPhoneById(1);
@@ -155,7 +163,7 @@ class PhoneServiceTest {
       "NewModel",
       newPhone.getAssignedId(),
       PhoneAvailability.YES,
-      "",
+      null,
       "GSM / HSPA / LTE",
       "GSM 850 / 900 / 1800 / 1900 - SIM 1 & SIM 2 (dual-SIM model only)",
       "HSDPA 850 / 900 / 1700(AWS) / 1900 / 2100",
@@ -168,6 +176,7 @@ class PhoneServiceTest {
 
     verify(phoneRepository, times(1)).findById(1);
     verify(fonoApiClient, times(1)).getDeviceDescription(PhoneServiceImpl.constructQueryParam(newPhone));
+    verify(phoneRepository, times(1)).getPhoneBorrowingProjection(1);
   }
 
   @Test
@@ -176,7 +185,13 @@ class PhoneServiceTest {
     newPhone.setId(1);
     given(phoneRepository.findById(1)).willReturn(Mono.just(newPhone));
     given(fonoApiClient.getDeviceDescription(PhoneServiceImpl.constructQueryParam(newPhone))).willReturn(Mono.empty());
-
+    given(phoneRepository.getPhoneBorrowingProjection(1)).willReturn(
+      Mono.just(PhoneBorrowingProjection.builder()
+        .available(true)
+        .phoneId(1)
+        .tester("John Max")
+        .build())
+    );
     // When
     Mono<DeviceDetail> deviceDetailMono = phoneService.getPhoneById(1);
 
@@ -186,7 +201,7 @@ class PhoneServiceTest {
       "NewModel",
       newPhone.getAssignedId(),
       PhoneAvailability.YES,
-      "",
+      null,
       null,
       null,
       null,
@@ -199,6 +214,7 @@ class PhoneServiceTest {
 
     verify(phoneRepository, times(1)).findById(1);
     verify(fonoApiClient, times(1)).getDeviceDescription(PhoneServiceImpl.constructQueryParam(newPhone));
+    verify(phoneRepository, times(1)).getPhoneBorrowingProjection(1);
   }
 
   @Test

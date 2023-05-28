@@ -2,16 +2,18 @@ package org.mberhe.management.phone;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mberhe.management.common.WebLayerTest;
 import org.mberhe.management.common.config.web.CustomPagination;
 import org.mberhe.management.common.exceptions.EntityAlreadyExistsException;
 import org.mberhe.management.common.exceptions.EntityNotFoundException;
 import org.mberhe.management.common.exceptions.handler.ErrorAttributesKey;
+import org.mberhe.management.common.exceptions.handler.GlobalErrorAttributes;
 import org.mberhe.management.phone.dto.DeviceDetail;
 import org.mberhe.management.phone.dto.PhoneAvailability;
 import org.mberhe.management.phone.dto.PhoneDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -26,7 +28,8 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@WebLayerTest
+@WebFluxTest(controllers = {PhoneRestController.class})
+@Import(GlobalErrorAttributes.class)
 class PhoneRestControllerTest {
 
   @MockBean
