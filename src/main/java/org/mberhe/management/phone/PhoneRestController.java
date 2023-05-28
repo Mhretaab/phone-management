@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.mberhe.management.common.config.web.CustomPagination;
+import org.mberhe.management.phone.borrowing.PhoneBorrowingDTO;
 import org.mberhe.management.phone.dto.DeviceDetail;
 import org.mberhe.management.phone.dto.PhoneDTO;
 import org.springframework.data.domain.Page;
@@ -62,9 +63,15 @@ public class PhoneRestController {
     return this.phoneService.deleteById(id);
   }
 
-//  @PostMapping("/borrow")
-//  @ResponseStatus(HttpStatus.CREATED)
-//  public Mono<String> borrowPhone(@Valid @RequestBody final PhoneBorrowingDTO phoneBorrowingDTO) {
-//    return this.phoneService.borrowPhone(phoneBorrowingDTO);
-//  }
+  @PostMapping("/borrow")
+  @ResponseStatus(HttpStatus.CREATED)
+  public Mono<String> borrowPhone(@Valid @RequestBody final PhoneBorrowingDTO phoneBorrowingDTO) {
+    return this.phoneService.borrowPhone(phoneBorrowingDTO);
+  }
+
+  @PutMapping("/return/{phoneId}")
+  @ResponseStatus(HttpStatus.CREATED)
+  public Mono<Void> returnPhone(@PathVariable("phoneId") final Integer phoneId) {
+    return this.phoneService.returnPhone(phoneId);
+  }
 }

@@ -2,6 +2,7 @@ package org.mberhe.management.common.exceptions.handler;
 
 import org.mberhe.management.common.exceptions.EntityAlreadyExistsException;
 import org.mberhe.management.common.exceptions.EntityNotFoundException;
+import org.mberhe.management.phone.PhoneBorrowingException;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
 import org.springframework.core.annotation.MergedAnnotations;
@@ -25,8 +26,8 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes {
   private final List<ExceptionRule> exceptionsRules = List.of(
     new ExceptionRule(MethodArgumentNotValidException.class, HttpStatus.BAD_REQUEST),
     new ExceptionRule(EntityNotFoundException.class, HttpStatus.BAD_REQUEST),
-    new ExceptionRule(EntityAlreadyExistsException.class, HttpStatus.BAD_REQUEST)
-    //new ExceptionRule(PhoneBorrowingException.class, HttpStatus.PRECONDITION_FAILED)
+    new ExceptionRule(EntityAlreadyExistsException.class, HttpStatus.BAD_REQUEST),
+    new ExceptionRule(PhoneBorrowingException.class, HttpStatus.PRECONDITION_FAILED)
   );
 
 
