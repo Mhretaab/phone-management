@@ -3,6 +3,7 @@ package org.mberhe.management.integration;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -14,10 +15,13 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 
+import java.time.Duration;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class FonoApiClientImpl implements FonoApiClient {
 
   public static final String DEVICE_MODEL_FIELD_KEY = "model";
@@ -69,6 +73,10 @@ public class FonoApiClientImpl implements FonoApiClient {
           return Mono.empty();
         }
       })
+      .retryWhen(
+        Retry.backoff(3, Duration.ofSeconds(1))
+          .maxBackoff(Duration.ofSeconds(5))
+      )
       .flatMapMany(jsonNode -> Flux.fromIterable(() -> jsonNode.get("results").elements()))
       .next()
       .map(jsonNode -> {
@@ -78,6 +86,7 @@ public class FonoApiClientImpl implements FonoApiClient {
           throw new RuntimeException("Failed to convert JSON node to DeviceDescription object", e);
         }
       })
+      .doOnError(err -> log.error("Error fetching device descriptiong: {}", err))
       .onErrorResume(err -> Mono.empty());
   }
 
