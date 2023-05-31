@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -13,11 +14,8 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.util.retry.Retry;
 
-import java.time.Duration;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class FonoApiClientImpl implements FonoApiClient {
@@ -64,10 +62,13 @@ public class FonoApiClientImpl implements FonoApiClient {
           .queryParam("where", "{value}")
           .encode().build(constructParamValues(queryParams)).toString()
       )
-      .retrieve()
-      .bodyToMono(JsonNode.class)
-      .log()
-      .retryWhen(Retry.backoff(3, Duration.ofSeconds(1)))
+      .exchangeToMono(response -> {
+        if (response.statusCode().equals(HttpStatus.OK)) {
+          return response.bodyToMono(JsonNode.class);
+        } else {
+          return Mono.empty();
+        }
+      })
       .flatMapMany(jsonNode -> Flux.fromIterable(() -> jsonNode.get("results").elements()))
       .next()
       .map(jsonNode -> {
@@ -81,12 +82,10 @@ public class FonoApiClientImpl implements FonoApiClient {
   }
 
   private String constructParamValues(final Map<String, Object> queryParams) {
-    final String keyValueFormat = "\"%s\":\"%s\"";
-
-    String value = queryParams.entrySet().stream()
-      .map(entry -> String.format(keyValueFormat, entry.getKey(), entry.getValue()))
-      .collect(Collectors.joining(","));
-
-    return "{" + value + "}";
+    try {
+      return objectMapper.writeValueAsString(queryParams);
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException("Failed to convert JSON node to DeviceDescription object", e);
+    }
   }
 }
